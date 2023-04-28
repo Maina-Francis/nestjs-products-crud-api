@@ -24,13 +24,44 @@ export class ProductsService {
 
   //   getIndividualProduct by id
   getIndividualProduct(productId: string) {
-    const product = this.products.find((prod) => prod.id === productId);
+    const product = this.findProduct(productId)[0];
+    return { ...product };
+  }
+
+  // Update Product
+  updateProduct(
+    productId: string,
+    title: string,
+    description: string,
+    price: number,
+  ) {
+    // Array destructuring
+    const [product, index] = this.findProduct(productId);
+    const updatedProduct = { ...product };
+
+    if (title) {
+      updatedProduct.title = title;
+    }
+
+    if (description) {
+      updatedProduct.description = description;
+    }
+    if (price) {
+      updatedProduct.price = price;
+    }
+    this.products[index] = updatedProduct;
+  }
+
+  // Private method to find product
+  private findProduct(id: string): [Product, number] {
+    const productIndex = this.products.findIndex((prod) => prod.id === id);
+    const product = this.products[productIndex];
 
     // throw a NotFoundException incase the product isn't found
     if (!product) {
       throw new NotFoundException('Product not found');
     }
 
-    return { ...product };
+    return [product, productIndex];
   }
 }
